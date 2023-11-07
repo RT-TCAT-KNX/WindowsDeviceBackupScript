@@ -3,15 +3,14 @@
 Write-Host "Starting script..."
 
 #variables
-$host = Convert-String -InputObject hostname #it's trying to re-write the hostname
-#throw error if drive not connected
-cd D:\
-$foldername = $env:COMPUTERNAME
-New-Item -Name $foldername -ItemType directory
-$winget_filename = $host + "_Installed_Packages.txt"
-$user_data_filename = $host + "_UserData.txt"
-$program_data_filename = $host + "_UserData.txt"
+#TODO throw error if drive not connected
+$folder_name = $env:COMPUTERNAME
+New-Item -Path D:\ -Name $folder_name -ItemType directory
+$winget_filename = -join("D:\",$folder_name,"\",$folder_name,"_Installed_Packages.txt")
 winget list | Out-File $winget_filename
+#$user_data_filename = $host + "_UserData.txt"
+#$program_data_filename = $host + "_UserData.txt"
+
 #check IF filesizes are too big
 #program data? -- FOR loop?
 #user  data? -- FOR loop?
