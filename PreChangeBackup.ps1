@@ -12,7 +12,7 @@ $winget_filename = -join($backup_folder_name,$computer_name,"_Installed_Packages
 
 New-Item -Path D:\ -Name $computer_name -ItemType directory
 winget list | Out-File $winget_filename
-Copy-Item $app_data_filepath -destination $backup_folder_name
+Copy-Item -Force -Recurse -Verbose $app_data_filepath -Destination $backup_folder_name
 Write-Host "The script has run successfully!"
 
 #TODO check IF filesizes are too big
