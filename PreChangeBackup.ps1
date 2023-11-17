@@ -1,38 +1,31 @@
-﻿#Comments like this
-
-Write-Host "Starting script..."
+﻿function Confirm-Drive-Path {
+Do {
+$drive_response = Read-Host "Enter removable storage drive filepath (i.e. D:\, F:\, etc.)"
+$confirmation = Read-Host "You entered $drive_response. Is this correct? y/n: "
+}
+Until ($confirmation -eq "y" -and (Test-Path $drive_response))
+$global:my_drive = $drive_response
+}
 
 #variables
-#TODO throw error if drive not connected
+
 $computer_name = $env:COMPUTERNAME
 $users_name = $env:UserName
-$app_data_filepath = -join("C:\Users\",$users_name,"AppData")
-$backup_folder_name = -join("D:\",$computer_name,"\")
-$username_filename = -join($backup_folder_name,"username.txt")
-$winget_filename = -join($backup_folder_name,$computer_name,"_Installed_Packages.txt")
+$appdata_filepath = -join("C:\Users\",$users_name,"\AppData")
+$backup_folder_name = -join($my_drive,$computer_name)
+$appdata_backup_folder_name = -join($backup_folder_name, "\AppData")
+$username_filename = -join($backup_folder_name,"\","username.txt")
+$winget_filename = -join($backup_folder_name,"\",$computer_name,"_Installed_Packages.txt")
 
-function File-Explorer-Copy {
-$oc = New-Object -ComObject Shell.Application
-$user_folder_filepath = -join("C:\Users\",$users_name)
-$c_file_op_folder = $oc.NameSpace($user_folder_filepath)
-$c_target_folder = $c_file_op_folder.ParseName("AppData")
-$c_target_folder.Verbs() | %{ if ($_.Name -eq '&Copy') { $_.DoIt() } }
-}
-
-function File-Explorer-Paste {
-$op = New-Object -ComObject Shell.Application
-$drive_folder_filepath = "D:\"
-$p_file_op_folder = $op.NameSpace($drive_folder_filepath)
-$p_target_folder = $p_file_op_folder.ParseName($computer_name)
-$p_target_folder.Verbs() | %{ if ($_.Name -like '*p*s*t*') { $_.DoIt() } } #Seems like Paste doesn't work here
-}
-
-New-Item -Path D:\ -Name $computer_name -ItemType directory
+Write-Host "Starting script..."
+Confirm-Drive-Path
+New-Item -Path $my_drive -Name $computer_name -ItemType directory
+$users_name | Out-File $username_filename
 winget list | Out-File $winget_filename
-Write-Host $users_name | Out-File $username_filename
-File-Explorer-Copy
-File-Explorer-Paste
-Write-Host "The script has run successfully!"
 
-#TODO check IF filesizes are too big
-#ELSE, throw error list other apps
+#Pick one of the lines below, but both are very slow. File Explorer is the fastest right now.
+#robocopy $appdata_filepath $backup_folder_name * /E /w:0 /r:1 /COPYALL /mt:8
+#Copy-Item -Force -Recurse -Verbose $appdata_filepath -Destination $backup_folder_name
+
+Write-Host "The script has run successfully!"
+Write-Host "Now copy the $appdata_filepath folder to the drive." #Once I fix the copy function, I will remove this
