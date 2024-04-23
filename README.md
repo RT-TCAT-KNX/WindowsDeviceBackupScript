@@ -27,7 +27,7 @@ Formatting the drive to NTFS is also recommended for additional speed and stabil
 1. Connect the drive to the device you want to back up
 2. Run 1OldComputerCopy.bat as administrator
 3. Open the 1OldComputerDELETE folder in the C:\ drive
-4. Run OC_WingetInstallCallerfyCopy.bat as administrator
+4. Run OC_WingetInstallCaller.bat as administrator
 5. Run PreChangeBackup.bat as administrator
 6. Make the desired changes to the device or change devices
 7. Connect the drive to the new device

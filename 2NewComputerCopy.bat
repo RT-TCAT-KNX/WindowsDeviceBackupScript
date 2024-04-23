@@ -1,1 +1,0 @@
-robocopy d:\2NewComputerDELETE c:\2NewComputerDELETE /e
